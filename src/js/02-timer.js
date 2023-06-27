@@ -19,7 +19,7 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-      // console.log(selectedDates[0]);
+      console.log(selectedDates[0]);
       if (selectedDates[0] <= date.minDate) {
             window.alert("Please choose a date in the future");
             startBtnElem.setAttribute('disabled', true);
@@ -48,13 +48,18 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
+
+
 const datePicker = flatpickr(inputElem, options);
 
-const timerHandler = (selectedDates) => {
-  setInterval(() => {
-    const startTime = datePicker.selectedDates[0].getTime();
-    console.log(startTime);
 
+
+const timerHandler = (selectedDates) => {
+  const restTime = 0;
+  const startTime = datePicker.selectedDates[0].getTime();
+  console.log(startTime);
+
+  const intervalId = setInterval(() => {
     const currentTime = Date.now();
     console.log(currentTime);
 
@@ -63,29 +68,30 @@ const timerHandler = (selectedDates) => {
 
     // повертає окремо days, hours, minutes, seconds
     const convertData = convertMs(deltaTime);  
-
+    updateInterface(convertData);
     console.log(convertData);
 
-    const addLeadingZero = (value) => {
-      const UIvalue = value.padStart(2, '0');
-      return UIvalue;
-    };
-
-    const days = convertData.days;
-    const hours = convertData.hours;
-    const minutes = convertData.minutes;
-    const seconds = convertData.seconds;
-     
-
-    daysElem.innerHTML = addLeadingZero(days);
-    hoursElem.innerHTML = addLeadingZero(hours);
-    minutesElem.innerHTML = addLeadingZero(minutes);
-    secondsElem.innerHTML = caddLeadingZero(seconds);
-
+    
+    if (deltaTime < 1000) {
+      clearInterval(intervalId);
+      intervalId = null;
+      return;
+    }
       
   }, 1000);
   
 };
+  function updateInterface({ days, hours, minutes, seconds }) {
+  daysElem.innerHTML = addLeadingZero(days);
+  hoursElem.textContent = addLeadingZero(hours);
+  minutesElem.textContent = addLeadingZero(minutes);
+  secondsElem.textContent = addLeadingZero(seconds);
+}
+
+ const addLeadingZero = (value) => {
+      const UIvalue = String(value).padStart(2, '0');
+      return UIvalue;
+    };
 
 const fp = flatpickr(inputElem, options);
 startBtnElem.addEventListener('click', timerHandler);
