@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from 'notiflix';
 
 const startBtnElem = document.querySelector('button[data-start]');
 const inputElem = document.querySelector('input[id="datetime-picker"]');
@@ -21,7 +22,7 @@ const options = {
   onClose(selectedDates) {
       console.log(selectedDates[0]);
       if (selectedDates[0] <= date.minDate) {
-            window.alert("Please choose a date in the future");
+            Notiflix.Notify.failure("Please choose a date in the future");
             startBtnElem.setAttribute('disabled', true);
     } else {
         startBtnElem.removeAttribute('disabled');
@@ -48,23 +49,15 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-
-
 const datePicker = flatpickr(inputElem, options);
 
-
-
-const timerHandler = (selectedDates) => {
-  const restTime = 0;
+const timerHandler = (evt) => {
   const startTime = datePicker.selectedDates[0].getTime();
-  console.log(startTime);
 
-  const intervalId = setInterval(() => {
+  let intervalId = setInterval(() => {
     const currentTime = Date.now();
-    console.log(currentTime);
 
     const deltaTime = startTime - currentTime;
-    console.log(deltaTime);
 
     // повертає окремо days, hours, minutes, seconds
     const convertData = convertMs(deltaTime);  
@@ -74,7 +67,6 @@ const timerHandler = (selectedDates) => {
     
     if (deltaTime < 1000) {
       clearInterval(intervalId);
-      intervalId = null;
       return;
     }
       
@@ -82,7 +74,7 @@ const timerHandler = (selectedDates) => {
   
 };
   function updateInterface({ days, hours, minutes, seconds }) {
-  daysElem.innerHTML = addLeadingZero(days);
+  daysElem.textContent = addLeadingZero(days);
   hoursElem.textContent = addLeadingZero(hours);
   minutesElem.textContent = addLeadingZero(minutes);
   secondsElem.textContent = addLeadingZero(seconds);
@@ -93,7 +85,6 @@ const timerHandler = (selectedDates) => {
       return UIvalue;
     };
 
-const fp = flatpickr(inputElem, options);
 startBtnElem.addEventListener('click', timerHandler);
 
 
